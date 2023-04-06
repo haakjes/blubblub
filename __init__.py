@@ -101,7 +101,7 @@ class Timer:
             self.remaining_time = 0
 
     def decrease_seconds(self):
-        self.remaining_time = self.remaining_time - 10000
+        self.remaining_time = self.remaining_time - 1000
         if self.remaining_time < 0:
             self.remaining_time = 0
 
@@ -190,7 +190,7 @@ def pause_timer(pressed):
         else:
             timer.pause()
     
-def change_mode(pressed):
+def press_home(pressed):
     if pressed:
         if timer.get_mode() == "up":
             timer.set_mode("target")
@@ -209,32 +209,33 @@ def change_mode(pressed):
             timer.going_target = False
             timer.count_up()
 
-def increase_minutes(pressed):
+def press_menu(pressed):
     if pressed:
-        timer.increase_minutes()
+        if timer.get_mode() in ["target", "target3"]:
+            timer.increase_target_seconds()
+        else:
+            timer.increase_minutes()
 
-def decrease_minutes(pressed):
+def press_select(pressed):
     if pressed:
-        timer.decrease_minutes()
-
-def decrease_seconds(pressed):
-    if pressed:
-        timer.decrease_seconds()
-
-def increase_target_seconds(pressed):
-    if pressed:
-        timer.increase_target_seconds()
-
-def decrease_target_seconds(pressed):
-    if pressed:
-        timer.decrease_target_seconds()
+        if timer.get_mode() in ["target", "target3"]:
+            timer.decrease_target_seconds()
+        else:
+            timer.decrease_minutes()
     
+def press_start(pressed):
+    if pressed:
+        if timer.get_mode() in ["target", "target3"]:
+            pass
+        else:
+            timer.decrease_seconds()
+
 buttons.attach(buttons.BTN_A, reset_timer)
 buttons.attach(buttons.BTN_B, pause_timer)
-buttons.attach(buttons.BTN_HOME, change_mode)
-buttons.attach(buttons.BTN_MENU, increase_target_seconds)
-buttons.attach(buttons.BTN_SELECT, decrease_target_seconds)
-buttons.attach(buttons.BTN_START, decrease_seconds)
+buttons.attach(buttons.BTN_HOME, press_home)
+buttons.attach(buttons.BTN_MENU, press_menu)
+buttons.attach(buttons.BTN_SELECT, press_select)
+buttons.attach(buttons.BTN_START, press_start)
 
 while True:
     time.sleep_ms(100)
